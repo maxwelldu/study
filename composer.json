@@ -1,0 +1,27 @@
+{
+  "name": "d1studio/cli",
+  "description": "d1studio-study",
+  "homepage": "https://github.com/d1studio/study",
+  "license": "BSD",
+  "keywords": ["cli"],
+  "authors": [
+    {
+      "name": "chengtao<751753158@qq.com>"
+    }
+  ],
+  "version": "0.0.1",
+  "require-dev": {
+  },
+  "repositories": [
+  ],
+  "require": {
+    "php": ">=5.4",
+    "monolog/monolog"                 : "1.2.*",
+    "almasaeed2010/adminlte"          : "dev-master",
+    "bmatzner/fontawesome-bundle"     : "dev-master",
+    "nmred/kafka-php"                 : "dev-master",
+    "hightman/xunsearch"              : "1.4.9"
+  },
+  "autoload": {
+  }
+}

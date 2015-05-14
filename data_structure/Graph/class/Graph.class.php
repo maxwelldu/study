@@ -7,15 +7,13 @@
 class Graph{
 
     const MATRIX_TYPE          = 1;//矩阵
-    const LIST_TYPE            = 2;//链表
+    const ADJACENCY_LIST_TYPE  = 2;//邻接链表
     const ORTHOGONAL_LIST_TYPE = 3;//十字链表
-
 
     private $edge_collection   = [];
     private $vertex_collection = [];
     private $is_direction      = false;
     private $storage_type      = self::MATRIX_TYPE;
-
     private $matrix            = [];
 
 
@@ -26,7 +24,10 @@ class Graph{
         $this->updateStorage();
     }
     public function addVertex(Vertex $vertex){
-        $this->vertex_collection[] = $vertex;
+        if(isset($this->vertex_collection[$vertex->getId()])){
+            throw new GraphVertexExistException($vertex->getId()."已经存在.");
+        }
+        $this->vertex_collection[$vertex->getId()] = $vertex;
         $this->updateStorage();
     }
     public function __construct(
@@ -37,28 +38,35 @@ class Graph{
         $this->storage_type      = $storage_type;
     }
     private function updateStorage(){
-        $list1 =  $this->vertex_collection;
-        $list2 =  $this->vertex_collection;
-        $this->matrix = [];
-        foreach($list1 as $k1=> $v1){
-            foreach($list2 as $k2=> $v2){
-                $this->matrix[$k1][$k2]=$this->isLink($v1,$v2);
-            }
-        }
-    }
-    private function isLink($vertex_1,$vertex_2){
-        if($this->is_direction){
-            foreach($this->edge_collection as $v){
-                list($ver_1,$ver_2) = $v->getVertex();
-                if([$ver_1,$ver_2] == [$vertex_1,$vertex_2]){
-                    return 1;
+        if($this->storage_type == self::MATRIX_TYPE){
+            $list1 =  $this->vertex_collection;
+            $list2 =  $this->vertex_collection;
+            $this->matrix = [];
+            foreach($list1 as $k1=> $v1){
+                foreach($list2 as $k2=> $v2){
+                    $this->matrix[$k1][$k2]=$this->isLink($v1,$v2);
                 }
             }
-        }else{
-            foreach($this->edge_collection as $v){
-                list($ver_1,$ver_2) = $v->getVertex();
-                if([$ver_1,$ver_2] == [$vertex_1,$vertex_2] || [$ver_2,$ver_1] == [$vertex_1,$vertex_2]){
-                    return 1;
+        }elseif($this->storage_type == self::ADJACENCY_LIST_TYPE){
+
+        }
+
+    }
+    private function isLink($vertex_1,$vertex_2){
+        if($this->storage_type == self::MATRIX_TYPE){
+            if($this->is_direction){
+                foreach($this->edge_collection as $v){
+                    list($ver_1,$ver_2) = $v->getVertex();
+                    if([$ver_1,$ver_2] == [$vertex_1,$vertex_2]){
+                        return 1;
+                    }
+                }
+            }else{
+                foreach($this->edge_collection as $v){
+                    list($ver_1,$ver_2) = $v->getVertex();
+                    if([$ver_1,$ver_2] == [$vertex_1,$vertex_2] || [$ver_2,$ver_1] == [$vertex_1,$vertex_2]){
+                        return 1;
+                    }
                 }
             }
         }
@@ -83,18 +91,22 @@ class Graph{
         }
         $out_arr[] = $tmp;
         $tmp = '';
+        $i = 0;
         foreach($this->matrix as  $k1=>$v1){
-            if($k1 == 0){
+            if($i == 0){
                 $tmp  .= str_pad('---------------',(count($this->vertex_collection)+1)*15,'-');
                 $tmp  .=  "\n";
             }
+            $i1=0;
             foreach($v1 as $k2=>$v2){
-                if($k2 == 0){
-                    $tmp  .=  '['. $this->vertex_collection[$k1].']|';
+                if($i1 == 0){
+                    $tmp  .=  '['. $k2.']|';
                 }
                 $tmp  .=  str_pad( "($v2)",15,' ',STR_PAD_BOTH);
+                $i1++;
             }
             $tmp  .=  "\n";
+            $i++;
         }
         $out_arr[] = trim($tmp) ;
         $out_arr[] = '--------------------------';
@@ -128,10 +140,18 @@ class Vertex{
      * @var null|string
      */
     private $id = null;
-    public function __construct(){
-        $this->id = uniqid();
+    public function __construct($id = null){
+        if($id == null){
+            $this->id = uniqid();
+        }else{
+            $this->id = $id;
+        }
+    }
+    public function getId(){
+        return $this->id;
     }
     public function __toString(){
         return strval($this->id);
     }
 }
+class GraphVertexExistException extends  Exception{}
