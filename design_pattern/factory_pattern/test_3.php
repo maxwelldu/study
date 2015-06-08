@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/AbstractFactory.php';
+require_once __DIR__ . '/AbstractFactory.php';
 
 $f1 = new Factory1();
 $f2 = new Factory2();
