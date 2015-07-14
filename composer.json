@@ -1,5 +1,5 @@
 {
-  "name": "d1studio/cli",
+  "name": "d1studio/study",
   "description": "d1studio-study",
   "homepage": "https://github.com/d1studio/study",
   "license": "BSD",
@@ -15,9 +15,7 @@
   "repositories": [
   ],
   "require": {
-    "php": ">=5.4",
-    "monolog/monolog"                 : "1.2.*",
-    "hightman/xunsearch"              : "1.4.9"
+    "php": ">=5.4"
   },
   "autoload": {
   }
